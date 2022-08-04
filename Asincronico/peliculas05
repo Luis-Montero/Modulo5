@@ -1,0 +1,49 @@
+SELECT id, Pelicula, estreno,"Director"
+	FROM public."Pelicula";
+
+--2
+SELECT * FROM "peliculas";
+COPY peliculas
+FROM 'C:\Users\YGOR\Desktop\FullStack\Modulo 5\Modulo5\posgretsql\peliculas.csv' 
+DELIMITER ',' 
+CSV HEADER;
+
+SELECT * FROM "reparto";
+COPY reparto
+FROM 'C:\Users\YGOR\Desktop\FullStack\Modulo 5\Modulo5\posgretsql\reparto.csv' 
+DELIMITER ',' 
+CSV HEADER;
+
+--03
+
+SELECT * FROM peliculas WHERE "Pelicula"= 'Titanic';
+
+--04
+
+SELECT * FROM reparto WHERE "id"= '2';
+
+--05
+
+SELECT COUNT ("id") FROM "reparto" WHERE "actor" = 'Harrison Ford';
+
+-- 06
+SELECT "Pelicula", "estreno"
+FROM "peliculas"
+WHERE "estreno" BETWEEN '1990' AND '1999'
+ORDER BY "estreno" ASC;
+
+
+-- 07
+SELECT "Pelicula", 
+LENGTH("Pelicula")
+AS "longitud_titulo"
+FROM peliculas
+
+-- 08
+SELECT "Pelicula", 
+LENGTH("Pelicula")
+AS "longitud_titulo"
+FROM peliculas
+ORDER BY "estreno" ASC;
+
+

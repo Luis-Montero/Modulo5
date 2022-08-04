@@ -1,0 +1,32 @@
+--Seleccionar el correo, id y título de todos los post publicados por el usuario 5.
+
+SELECT "email", "usuario_id", "titulo" FROM "post"
+JOIN "usuarios" ON post.usuario_id=usuarios.id
+WHERE "usuario_id" = 5;
+    
+--Listar el correo, id y el detalle de todos los comentarios que no hayan sido
+--realizados por el usuario con email usuarios06@hotmail.com
+
+SELECT "email", "usuario_id", "texto" FROM "comentario"
+JOIN "usuarios" ON comentario.usuario_id=usuarios.id
+WHERE "email" <> 'usuarios06@hotmail.com';
+
+--Listar los usuarios que no han publicado ningún post.
+
+SELECT usuarios.id ,usuarios.email FROM usuarios
+FULL OUTER JOIN post ON usuarios.id = post.usuario_id
+WHERE usuarios.id is null OR post.usuario_id is null;
+
+--● Listar todos los post con sus comentarios (incluyendo aquellos que no poseen
+--comentarios).
+
+SELECT post.id, post.usuario_id, post.titulo, post.fecha FROM post
+LEFT JOIN comentario ON post.id = comentario.post_id
+GROUP BY post.id, post.usuario_id, post.titulo, post.fecha ORDER BY id;
+
+--Listar todos los usuarios que hayan publicado un post en Junio.
+
+SELECT usuarios.id, usuarios.email, post.titulo, post.fecha FROM usuarios
+JOIN "post" ON usuarios.id=post.usuario_id
+WHERE "fecha" BETWEEN '2020-06-01' AND '2020-06-30';
+
