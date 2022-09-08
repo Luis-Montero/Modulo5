@@ -1,0 +1,96 @@
+CREATE TABLE socios(
+	rut varchar (10) PRIMARY KEY,
+	nombre varchar (50),
+	apellido varchar (50),
+	direccion varchar (100),
+	telefono varchar (12)
+)
+CREATE TABLE autor(
+	id integer PRIMARY KEY,
+	nombre varchar (50),
+	apellido varchar(50),
+	fecha_nacimiento varchar(4),
+	fecha_deceso varchar(4)
+)
+CREATE TABLE libros(
+	ISBN varchar (15) PRIMARY KEY,
+	id_autor integer,
+	id_coautor integer,
+    titulo varchar (100),
+	numero_paginas integer
+)
+CREATE TABLE prestamos(
+	id integer PRIMARY KEY,
+	rut_socio varchar (10), 
+	ISBN_libro varchar (15),
+	fecha_prestamo date,
+	fecha_estimada_devolucion date,
+	fecha_entrega date
+)
+INSERT INTO public.socios(
+	rut, nombre, apellido, direccion, telefono)
+	VALUES ('11111111-1' , 'Juan', 'Soto', 'Avenida 1, Santiago', '911111111'),
+	('22222222-2' , 'Ana', 'Pérez', 'Pasaje 2, Santiago', '922222222'),
+	('33333333-3' , 'Sandra', 'Aguilar', 'Avenida 2, Santiago', '933333333'),
+	('44444444-4' , 'Esteban', 'Jeres', 'Avenida 3, Santiago', '944444444'),
+	('55555555-5' , 'Silvana','Muños','Pasaje 3, Santiago', '955555555');
+
+INSERT INTO public.autor(
+	id, nombre, apellido, fecha_nacimiento, fecha_muerte)
+	VALUES (1, 'Andrés', 'Ulloa', 1982 ,null),
+
+	(2, 'Sergio', 'Mardones', 1950 , 2012 ),
+
+	(3, 'Jose', 'Salgado', 1968 , 2020 ),
+
+	(4, 'Ana', 'Salgado', 1972 , null ),
+
+	(5, 'Martin', 'Porta', 1976 , null);
+
+INSERT INTO public.libros(
+	isbn, titulo, numero_paginas, id_autor, id_coautor)
+		VALUES ('111-1111111-111', 'Cuentos de terror', 344, 3 , 4),
+		('222-2222222-222', 'Poesías contemporaneas', 167 ,1 , null),
+ 		('333-3333333-333', 'Historia de Asia', 511 , 2 , null),
+		('444-4444444-444', 'Manual de mecánica', 298 , 5 , null);
+
+INSERT INTO public.prestamos(
+	id, rut_socio, isbn_libro, fecha_prestamo, fecha_estimada_devolucion, fecha_entrega)
+	VALUES (1, '11111111-1', '111-1111111-111' , '2020-01-20', '2020-01-27', '2020-01-27'),
+		(2, '55555555-5', '222-2222222-222' , '2020-01-20', '2020-01-27', '2020-01-30'),
+		(3, '33333333-3', '333-3333333-333' , '2020-01-22', '2020-01-29', '2020-01-30'),
+		(4, '44444444-4', '444-4444444-444' , '2020-01-23', '2020-01-30', '2020-01-30'),
+		(5, '22222222-2', '111-1111111-111' , '2020-01-27', '2020-01-30', '2020-02-04'),
+		(6, '11111111-1', '444-4444444-444' , '2020-01-31', '2020-02-07', '2020-02-12'),
+		(7, '33333333-3', '222-2222222-222' , '2020-01-31', '2020-02-07', '2020-02-12');
+
+--Realizar las siguientes consultas:
+--a. Mostrar todos los libros que posean menos de 300 páginas.
+SELECT * FROM "libros" AS l
+WHERE l."numero_paginas">300;
+
+--b. Mostrar todos los autores que hayan nacido después del 01-01-1970.
+SELECT * FROM "autor" AS A
+WHERE CAST(SUBSTRING(A."fecha_nacimiento",0,5) AS INTEGER) > 1978;
+
+--c. ¿Cuál es el libro más solicitado?
+
+SELECT * FROM "Prestamos"
+
+SELECT libros."titulo", COUNT("isbn_libro") AS "Cantidad" FROM "prestamos"
+JOIN "libros" ON libros."isbn"=prestamos."isbn_libro"
+GROUP BY libros."titulo","isbn_libro" ORDER BY "Cantidad" DESC LIMIT(1)
+
+-- d. Si se cobrara una multa de $100 por cada día de atraso, mostrar cuánto
+-- debería pagar cada usuario que entregue el préstamo después de 7 días.
+
+SELECT * FROM "prestamos"
+
+SELECT "fecha_estimada_devolucion", "fecha_entrega" FROM "prestamos" WHERE "fecha_entrega" > "fecha_estimada_devolucion"
+
+SELECT "socios"."nombre", "socios"."apellido", "prestamos"."rut_socio",
+("fecha_estimada_devolucion"-"fecha_entrega") AS "dias_atraso",
+(("fecha_entrega"-"fecha_estimada_devolucion")*100) AS "Multa" FROM "prestamos"
+JOIN "socios" ON "socios"."rut"="prestamos"."rut_socio"
+WHERE "fecha_entrega" > "fecha_estimada_devolucion" 
+GROUP BY "socios"."nombre", "socios"."apellido", "prestamos"."fecha_estimada_devolucion", "prestamos"."fecha_entrega", "prestamos"."rut_socio"  
